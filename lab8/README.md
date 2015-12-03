@@ -1,1 +1,1 @@
-Porównuje klasyfikatory kNN, NaiveBayes oraz ctree(Party)
+Porównuje klasyfikatory kNN(class), NaiveBayes(e1071) oraz ctree(party)
