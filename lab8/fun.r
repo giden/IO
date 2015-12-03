@@ -1,3 +1,7 @@
+library(e1071)
+library(class)
+library(gmodels)
+library("party")
 normalize <- function(x) {
 num <- x - min(x)
 denom <- max(x) - min(x)
@@ -15,7 +19,7 @@ counter <- counter + 1
 }
 }
 percent <- (counter/rowNbr)*100
-result <- data.frame(total=counter, percent=percent, max=rowNbr)
+result <- data.frame(equal=counter, percent=percent, max=rowNbr)
 return(result)
 }
 
@@ -34,6 +38,7 @@ else{ neg <- neg +1 }
 }}
 percent <- (pos/(neg+pos))*100
 result <- data.frame(TPR=pos/(neg+pos), percent=percent, total=neg+pos, trueP=pos, falseN=neg)
+print(result)
 return(pos/(neg+pos))
 }
 
@@ -53,11 +58,11 @@ else{ neg <- neg +1 }
 }
 percent <- (pos/(neg+pos))*100
 result <- data.frame(FPR=pos/(neg+pos), percent=percent, total=neg+pos, falseP=pos, trueN=neg)
+print(result)
 return(pos/(neg+pos))
 }
 
-library(class)
-library(gmodels)
+
 set.seed(1234)
 diab <- read.csv("diabetes.csv", header=TRUE)
 diab_norm <- as.data.frame(lapply(diab[1:8], normalize))
@@ -71,49 +76,37 @@ print("kNN 1")
 diab_pred <- knn(train=diab.training, test=diab.test, cl=diab.trainLabels, k=1)
 print(check(cbind.data.frame(diab_pred, diab.testLabels)))
 TPR <- checkTPR(cbind.data.frame(diab_pred, diab.testLabels))
-print(TPR)
 FPR <- checkFPR(cbind.data.frame(diab_pred, diab.testLabels))
-print(FPR)
 plot(FPR, TPR, xlim=range(0:1), ylim=range(0:1), col='red')
 CrossTable(x=diab.testLabels, y=diab_pred, prop.chisq=FALSE)
 print("kNN 3")
 diab_pred <- knn(train=diab.training, test=diab.test, cl=diab.trainLabels, k=3)
 print(check(cbind.data.frame(diab_pred, diab.testLabels)))
 TPR <- checkTPR(cbind.data.frame(diab_pred, diab.testLabels))
-print(TPR)
 FPR <- checkFPR(cbind.data.frame(diab_pred, diab.testLabels))
-print(FPR)
 points(FPR, TPR, col='blue')
 CrossTable(x=diab.testLabels, y=diab_pred, prop.chisq=FALSE)
 print("kNN 7")
 diab_pred <- knn(train=diab.training, test=diab.test, cl=diab.trainLabels, k=7)
 print(check(cbind.data.frame(diab_pred, diab.testLabels)))
 TPR <- checkTPR(cbind.data.frame(diab_pred, diab.testLabels))
-print(TPR)
 FPR <- checkFPR(cbind.data.frame(diab_pred, diab.testLabels))
-print(FPR)
 points(FPR, TPR,col='purple')
 CrossTable(x=diab.testLabels, y=diab_pred, prop.chisq=FALSE)
 print("naiveBayes")
-library(e1071)
 m <- naiveBayes(diab.training, diab.trainLabels)
 diab_pred <-predict(m, diab.test)
 print(check(cbind.data.frame(diab_pred, diab.testLabels)))
 TPR <- checkTPR(cbind.data.frame(diab_pred, diab.testLabels))
-print(TPR)
 FPR <- checkFPR(cbind.data.frame(diab_pred, diab.testLabels))
-print(FPR)
 points(FPR, TPR,col='orange')
 CrossTable(y=predict(m, diab.test), x=diab.testLabels, prop.chisq=FALSE)
 print("ctree")
- library("party")
 tree__ <- ctree(diab.trainLabels ~ pregnant.times + glucose.concentr + blood.pressure + skin.thickness + insulin + mass.index + pedigree.func + age, data=cbind(diab.training,diab.trainLabels))
 diab_pred <- predict(tree__, diab.test)
 print(check(cbind.data.frame(diab_pred, diab.testLabels)))
 TPR <- checkTPR(cbind.data.frame(diab_pred, diab.testLabels))
-print(TPR)
 FPR <- checkFPR(cbind.data.frame(diab_pred, diab.testLabels))
-print(FPR)
 points(FPR, TPR, col='green')
 names <- c('knn1','knn3','knn7','naiveBayes','party')
 lege <- c('red','blue','purple','orange','green')
