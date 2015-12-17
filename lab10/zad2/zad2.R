@@ -1,14 +1,4 @@
 library(neuralnet)
-siatk.dane = read.csv("dat.csv")
-siatk.nn <- neuralnet(gra~wiek+waga+wzrost, siatk.dane, hidden=2, lifesign="full")
-plot(siatk.nn)
-siatk.predict <- compute(siatk.nn, siatk.dane[1:3])
-siatk.nn <- neuralnet(gra~wiek+waga+wzrost, siatk.dane, hidden=2, lifesign="full")
-source("fun.R")
-fck.siatk(23,75,176)
-fct.siatk(48,97,178)
-
-library(neuralnet)
 normalize <- function(x) {
 num <- x - min(x)
 denom <- max(x) - min(x)
